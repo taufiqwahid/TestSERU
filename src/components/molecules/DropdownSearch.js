@@ -16,9 +16,10 @@ import Button from '../atoms/Button';
 const DropdownSearch = props => {
   const refRBSheet = useRef();
 
-  const renderItem = ({item}) => {
+  const renderItem = ({item, index}) => {
     return (
       <TouchableOpacity
+        key={index}
         style={{
           padding: 5,
           borderBottomColor: '#f2f2f2',
