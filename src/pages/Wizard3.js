@@ -5,7 +5,6 @@ import {Texts} from '../utils/texts';
 import toastMessage from '../utils/toastMessage';
 
 const Wizard3 = ({navigation, route}) => {
-  console.log(route);
   const dataRoute = route?.params?.data;
   const formData = new FormData();
 

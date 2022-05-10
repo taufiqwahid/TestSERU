@@ -52,7 +52,6 @@ const Wizard1 = ({navigation}) => {
   const getKota = async () => {
     await axios.get(com.kota(chooseProvinsi.id)).then(item => {
       setDataKota(item?.data?.kota_kabupaten);
-      console.log('BERHASUL', item);
     });
   };
   const getKecamatan = async () => {
@@ -63,7 +62,6 @@ const Wizard1 = ({navigation}) => {
   const getKelurahan = async () => {
     await axios.get(com.kelurahan(chooseKecamatan.id)).then(item => {
       setDataKelurahan(item?.data.kelurahan);
-      console.log('object', item?.data);
     });
   };
 
@@ -76,8 +74,7 @@ const Wizard1 = ({navigation}) => {
     kecamatan: chooseKecamatan?.nama,
     kelurahan: chooseKelurahan?.nama,
   };
-  console.log('object', chooseProvinsi);
-  console.log('object', data);
+
   const nextPage = () => {
     if (
       isEmpty(data.firstName) ||

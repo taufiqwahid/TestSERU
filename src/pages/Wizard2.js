@@ -40,7 +40,6 @@ const Wizard2 = ({navigation, route}) => {
       toastMessage('Pastikan data tidak ada yang kosong !', 'info');
     } else {
       navigation.navigate('Wizard3', {data: data});
-      console.log(data);
     }
   };
   return (

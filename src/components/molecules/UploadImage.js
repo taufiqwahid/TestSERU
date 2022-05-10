@@ -37,8 +37,6 @@ const UploadImage = ({type, setPhoto, source, label}) => {
     }
   };
 
-  console.log('chooseFile', chooseFile);
-
   const images = [
     {
       url: source?.uri,
