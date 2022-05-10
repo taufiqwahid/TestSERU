@@ -76,19 +76,19 @@ const Wizard1 = ({navigation}) => {
   };
 
   const nextPage = () => {
-    if (
-      isEmpty(data.firstName) ||
-      isEmpty(data.lastName) ||
-      isEmpty(data.biodata) ||
-      isEmpty(data.provinsi) ||
-      isEmpty(data.kota) ||
-      isEmpty(data.kecamatan) ||
-      isEmpty(data.kelurahan)
-    ) {
-      toastMessage('Pastikan data tidak ada yang kosong !', 'info');
-    } else {
-      navigation.navigate('Wizard2', {data: data});
-    }
+    // if (
+    //   isEmpty(data.firstName) ||
+    //   isEmpty(data.lastName) ||
+    //   isEmpty(data.biodata) ||
+    //   isEmpty(data.provinsi) ||
+    //   isEmpty(data.kota) ||
+    //   isEmpty(data.kecamatan) ||
+    //   isEmpty(data.kelurahan)
+    // ) {
+    //   toastMessage('Pastikan data tidak ada yang kosong !', 'info');
+    // } else {
+    navigation.navigate('Wizard2', {data: data});
+    // }
   };
   return (
     <SafeAreaView

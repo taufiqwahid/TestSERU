@@ -17,10 +17,11 @@ const SplashScreen = ({navigation}) => {
         flex: 1,
         alignItems: 'center',
         paddingHorizontal: 80,
+        backgroundColor: 'white',
       }}>
       <Text
         style={{
-          ...Texts.regular1,
+          ...Texts.regular2,
           color: Colors.default,
           textAlign: 'center',
           marginTop: -50,

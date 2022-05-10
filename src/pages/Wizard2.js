@@ -61,6 +61,7 @@ const Wizard2 = ({navigation, route}) => {
         }}
         showsVerticalScrollIndicator={false}>
         <View style={{paddingHorizontal: 20}}>
+          <Gap height={20} />
           <UploadImage
             value={photoSelfie}
             setPhoto={setPhotoSelfie}
