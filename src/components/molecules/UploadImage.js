@@ -51,7 +51,7 @@ const UploadImage = ({type, setPhoto, source, label}) => {
           onPress={checkType}
           style={{
             height: 250,
-            width: width,
+            width: width - 45,
             maxWidth: 350,
             borderRadius: 10,
             borderWidth: 1,
@@ -60,6 +60,7 @@ const UploadImage = ({type, setPhoto, source, label}) => {
             alignItems: 'center',
             justifyContent: 'center',
             borderStyle: 'dotted',
+            marginHorizontal: 200,
           }}>
           {type == 'selfie' && (
             <Image
