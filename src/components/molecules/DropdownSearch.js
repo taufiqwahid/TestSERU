@@ -41,7 +41,7 @@ const DropdownSearch = props => {
       <View>
         <Pressable onPress={() => refRBSheet?.current?.open()}>
           <View style={styles.textinput}>
-            <Text>{props.value}</Text>
+            <Text style={{...Texts.regular1}}>{props.value}</Text>
           </View>
         </Pressable>
       </View>
