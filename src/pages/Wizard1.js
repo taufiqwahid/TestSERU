@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {isEmpty} from 'lodash';
+import {filter, isEmpty} from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, ScrollView, View} from 'react-native';
 import Button from '../components/atoms/Button';
@@ -12,16 +12,19 @@ import {Colors} from '../utils/colors';
 import toastMessage from '../utils/toastMessage';
 
 const Wizard1 = ({navigation}) => {
-  const [open, setOpen] = useState(false);
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
   const [biodata, setBiodata] = useState();
 
-  const [searchRegion, setSearchRegion] = useState('');
   const [dataProvinsi, setDataProvinsi] = useState([]);
   const [dataKota, setDataKota] = useState([]);
   const [dataKecamatan, setDataKecamatan] = useState([]);
   const [dataKelurahan, setDataKelurahan] = useState([]);
+
+  const [dataSearchProvinsi, setDataSearchProvinsi] = useState([]);
+  const [dataSearchKota, setDataSearchKota] = useState([]);
+  const [dataSearchKecamatan, setDataSearchKecamatan] = useState([]);
+  const [dataSearchKelurahan, setDataSearchKelurahan] = useState([]);
 
   const [chooseProvinsi, setChooseProvinsi] = useState();
   const [chooseKota, setChooseKota] = useState();
@@ -50,17 +53,17 @@ const Wizard1 = ({navigation}) => {
   };
 
   const getKota = async () => {
-    await axios.get(com.kota(chooseProvinsi.id)).then(item => {
+    await axios.get(com.kota(chooseProvinsi?.id)).then(item => {
       setDataKota(item?.data?.kota_kabupaten);
     });
   };
   const getKecamatan = async () => {
-    await axios.get(com.kecamatan(chooseKota.id)).then(item => {
+    await axios.get(com.kecamatan(chooseKota?.id)).then(item => {
       setDataKecamatan(item.data?.kecamatan);
     });
   };
   const getKelurahan = async () => {
-    await axios.get(com.kelurahan(chooseKecamatan.id)).then(item => {
+    await axios.get(com.kelurahan(chooseKecamatan?.id)).then(item => {
       setDataKelurahan(item?.data.kelurahan);
     });
   };
@@ -90,6 +93,59 @@ const Wizard1 = ({navigation}) => {
       navigation.navigate('Wizard2', {data: data});
     }
   };
+
+  const titleCase = str => {
+    var splitStr = str.toLowerCase().split(' ');
+    for (var i = 0; i < splitStr.length; i++) {
+      // You do not need to check if i is larger than splitStr length, as your for does that for you
+      // Assign it back to the array
+      splitStr[i] =
+        splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+    }
+    // Directly return the joined string
+    return splitStr.join(' ');
+  };
+
+  const searchProvinsi = text => {
+    if (text?.length > 0) {
+      setDataSearchProvinsi(
+        filter(dataProvinsi, item => titleCase(text) == item?.nama),
+      );
+    } else {
+      setDataSearchProvinsi([]);
+    }
+  };
+
+  const searchKota = text => {
+    if (text?.length > 0) {
+      setDataSearchKota(
+        filter(dataKota, item => titleCase(text) == item?.nama),
+      );
+    } else {
+      setDataKota([]);
+    }
+  };
+
+  const searchKecamatan = text => {
+    if (text?.length > 0) {
+      setDataSearchKecamatan(
+        filter(dataKecamatan, item => titleCase(text) == item?.nama),
+      );
+    } else {
+      setDataSearchKecamatan([]);
+    }
+  };
+
+  const searchKelurahan = text => {
+    text?.length > 0
+      ? setDataSearchKelurahan(
+          filter(dataKelurahan, item => titleCase(text) == item?.nama),
+        )
+      : setDataSearchKelurahan([]);
+  };
+
+  console.log('asdasdasd', dataSearchProvinsi);
+
   return (
     <SafeAreaView
       style={{
@@ -130,48 +186,48 @@ const Wizard1 = ({navigation}) => {
             textAlignVertical="top"
           />
           <DropdownSearch
-            dataRegion={dataProvinsi}
-            // searchData={setSearchRegion}
+            dataRegion={
+              dataSearchProvinsi.length ? dataSearchProvinsi : dataProvinsi
+            }
+            searchData={searchProvinsi}
             chooseRegion={setChooseProvinsi}
             label="Provinsi"
             type="Provinsi"
             placeholder="Pilih Provinsi"
-            open={open}
-            setOpen={setOpen}
             value={chooseProvinsi?.nama}
           />
+
           <DropdownSearch
-            dataRegion={dataKota}
-            // searchData={setSearchRegion}
+            dataRegion={dataSearchKota.length ? dataSearchKota : dataKota}
+            searchData={searchKota}
             chooseRegion={setChooseKota}
             label="Kota"
             type="Kota"
             placeholder="Pilih Kota"
-            open={open}
-            setOpen={setOpen}
             value={chooseKota?.nama}
           />
+
           <DropdownSearch
-            dataRegion={dataKecamatan}
-            // searchData={setSearchRegion}
+            dataRegion={
+              dataSearchKecamatan.length ? dataSearchKecamatan : dataKecamatan
+            }
+            searchData={searchKecamatan}
             chooseRegion={setChooseKecamatan}
             label="Kecamatan"
             type="Kecamatan"
             placeholder="Pilih Kecamatan"
-            open={open}
-            setOpen={setOpen}
             value={chooseKecamatan?.nama}
           />
 
           <DropdownSearch
-            dataRegion={dataKelurahan}
-            // searchData={setSearchRegion}
+            dataRegion={
+              dataSearchKelurahan.length ? dataSearchKelurahan : dataKelurahan
+            }
+            searchData={searchKelurahan}
             chooseRegion={setChooseKelurahan}
             label="Kelurahan"
             type="Kelurahan"
             placeholder="Pilih Kelurahan"
-            open={open}
-            setOpen={setOpen}
             value={chooseKelurahan?.nama}
           />
 

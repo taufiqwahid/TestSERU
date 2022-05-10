@@ -15,20 +15,24 @@ import Button from '../atoms/Button';
 
 const DropdownSearch = props => {
   const refRBSheet = useRef();
-  const renderItem = ({item}) => (
-    <TouchableOpacity
-      style={{
-        padding: 5,
-        borderBottomColor: '#f2f2f2',
-        borderBottomWidth: 1,
-      }}
-      onPress={() => {
-        props.chooseRegion(item);
-        refRBSheet?.current?.close();
-      }}>
-      <Text style={{...Texts.regular1}}>{item.nama}</Text>
-    </TouchableOpacity>
-  );
+
+  const renderItem = ({item}) => {
+    return (
+      <TouchableOpacity
+        style={{
+          padding: 5,
+          borderBottomColor: '#f2f2f2',
+          borderBottomWidth: 1,
+        }}
+        onPress={() => {
+          props.chooseRegion(item);
+          refRBSheet?.current?.close();
+          props.searchData();
+        }}>
+        <Text style={{...Texts.regular1}}>{item.nama}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={{marginBottom: 20}}>
@@ -62,18 +66,33 @@ const DropdownSearch = props => {
             paddingHorizontal: 10,
           }}>
           <View>
-            <TextInput
-              style={styles.textinput}
-              maxLength={25}
-              placeholder="Search Provinsi"
-              onChangeText={props.searchData}
-              value={props.value}
-            />
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <TextInput
+                style={styles.textinput}
+                maxLength={40}
+                placeholder="Cari nama wilayah . . ."
+                onChangeText={props.searchData}
+                // value={props.value}
+              />
+              {/* <Text
+                onPress={() => props.searchData('')}
+                style={{
+                  ...Texts.regular1,
+                  color: 'grey',
+                  position: 'absolute',
+                  right: 10,
+                  fontSize: 30,
+                }}>
+                x
+              </Text> */}
+            </View>
 
             <FlatList
               data={props.dataRegion}
               renderItem={renderItem}
-              keyExtractor={item => item.id}
+              extraData={props.dataRegion}
+              keyExtractor={item => item}
             />
           </View>
           <Button onPress={() => refRBSheet?.current?.close()} text="Oke" />
@@ -92,5 +111,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.black,
     borderWidth: 1,
     padding: 10,
+    width: '100%',
   },
 });
