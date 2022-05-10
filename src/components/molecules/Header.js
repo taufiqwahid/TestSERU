@@ -1,7 +1,7 @@
-import {StyleSheet, Text, View, Image, Pressable} from 'react-native';
 import React from 'react';
-import {Texts} from '../../utils/texts';
+import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {Colors} from '../../utils/colors';
+import {Texts} from '../../utils/texts';
 
 const Header = ({title, subtitle, onPress, firstPage}) => {
   return (

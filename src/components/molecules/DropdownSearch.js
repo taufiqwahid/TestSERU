@@ -1,13 +1,34 @@
 import React, {useRef} from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {Colors} from '../../utils/colors';
 import {Texts} from '../../utils/texts';
 import Button from '../atoms/Button';
 
-const DropdownItem = props => {
+const DropdownSearch = props => {
   const refRBSheet = useRef();
+  const renderItem = ({item}) => (
+    <TouchableOpacity
+      style={{
+        padding: 5,
+        borderBottomColor: '#f2f2f2',
+        borderBottomWidth: 1,
+      }}
+      onPress={() => {
+        props.chooseRegion(item);
+        refRBSheet?.current?.close();
+      }}>
+      <Text style={{...Texts.regular1}}>{item.nama}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={{marginBottom: 20}}>
@@ -40,17 +61,21 @@ const DropdownItem = props => {
             justifyContent: 'space-between',
             paddingHorizontal: 10,
           }}>
-          <DropDownPicker
-            searchable
-            open={props.open}
-            value={props.value}
-            items={props.items}
-            setOpen={props.setOpen}
-            setValue={props.setValue}
-            // setItems={setItemProvinsi}
-            placeholder={props.value}
-            searchPlaceholder={`Masukkan nama ${props.type}`}
-          />
+          <View>
+            <TextInput
+              style={styles.textinput}
+              maxLength={25}
+              placeholder="Search Provinsi"
+              onChangeText={props.searchData}
+              value={props.value}
+            />
+
+            <FlatList
+              data={props.dataRegion}
+              renderItem={renderItem}
+              keyExtractor={item => item.id}
+            />
+          </View>
           <Button onPress={() => refRBSheet?.current?.close()} text="Oke" />
         </View>
       </RBSheet>
@@ -58,7 +83,7 @@ const DropdownItem = props => {
   );
 };
 
-export default DropdownItem;
+export default DropdownSearch;
 
 const styles = StyleSheet.create({
   textinput: {

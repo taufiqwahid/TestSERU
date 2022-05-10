@@ -1,7 +1,5 @@
-import React, {useEffect} from 'react';
-import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import Button from '../components/atoms/Button';
-import Header from '../components/molecules/Header';
+import React from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Colors} from '../utils/colors';
 import {Texts} from '../utils/texts';
 import toastMessage from '../utils/toastMessage';

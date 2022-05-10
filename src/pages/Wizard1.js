@@ -1,12 +1,13 @@
+import axios from 'axios';
 import {isEmpty} from 'lodash';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView, ScrollView, View} from 'react-native';
 import Button from '../components/atoms/Button';
 import Gap from '../components/atoms/Gap';
-import DropdownItem from '../components/molecules/DropdownItem';
+import DropdownSearch from '../components/molecules/DropdownSearch';
 import Header from '../components/molecules/Header';
 import InputItem from '../components/molecules/InputItem';
-import {dataProvinsi} from '../config/dataStatic';
+import {com} from '../config/API';
 import {Colors} from '../utils/colors';
 import toastMessage from '../utils/toastMessage';
 
@@ -15,33 +16,68 @@ const Wizard1 = ({navigation}) => {
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
   const [biodata, setBiodata] = useState();
-  const [provinsi, setProvinsi] = useState();
-  const [kota, setKota] = useState();
-  const [kecamatan, setKecamatan] = useState();
-  const [kelurahan, setKelurahan] = useState();
-  const [itemProvinsi, setItemProvinsi] = useState([
-    {value: {id: 14, nama: 'Riau'}, label: 'Riau'},
-    {value: {id: 15, nama: 'Jambi'}, label: 'Jambi'},
-    {value: {id: 16, nama: 'Sumatera Selatan'}, label: 'Sumatera Selatan'},
-    {value: {id: 17, nama: 'Bengkulu'}, label: 'Bengkulu'},
-    {value: {id: 18, nama: 'Lampung'}, label: 'Lampung'},
-    {
-      value: {id: 19, nama: 'Kepulauan Bangka Belitung'},
-      label: 'Kepulauan Bangka Belitung',
-    },
-    {value: {id: 21, nama: 'Kepulauan Riau'}, label: 'Kepulauan Riau'},
-  ]);
+
+  const [searchRegion, setSearchRegion] = useState('');
+  const [dataProvinsi, setDataProvinsi] = useState([]);
+  const [dataKota, setDataKota] = useState([]);
+  const [dataKecamatan, setDataKecamatan] = useState([]);
+  const [dataKelurahan, setDataKelurahan] = useState([]);
+
+  const [chooseProvinsi, setChooseProvinsi] = useState();
+  const [chooseKota, setChooseKota] = useState();
+  const [chooseKecamatan, setChooseKecamatan] = useState();
+  const [chooseKelurahan, setChooseKelurahan] = useState();
+  useEffect(() => {
+    getProvinsi();
+  }, []);
+
+  useEffect(() => {
+    getKota();
+  }, [chooseProvinsi]);
+
+  useEffect(() => {
+    getKecamatan();
+  }, [chooseKota]);
+
+  useEffect(() => {
+    getKelurahan();
+  }, [chooseKecamatan]);
+
+  const getProvinsi = async () => {
+    await axios.get(com.provinsi).then(item => {
+      setDataProvinsi(item?.data?.provinsi);
+    });
+  };
+
+  const getKota = async () => {
+    await axios.get(com.kota(chooseProvinsi.id)).then(item => {
+      setDataKota(item?.data?.kota_kabupaten);
+      console.log('BERHASUL', item);
+    });
+  };
+  const getKecamatan = async () => {
+    await axios.get(com.kecamatan(chooseKota.id)).then(item => {
+      setDataKecamatan(item.data?.kecamatan);
+    });
+  };
+  const getKelurahan = async () => {
+    await axios.get(com.kelurahan(chooseKecamatan.id)).then(item => {
+      setDataKelurahan(item?.data.kelurahan);
+      console.log('object', item?.data);
+    });
+  };
 
   const data = {
     firstName: firstName,
     lastName: lastName,
     biodata: biodata,
-    provinsi: provinsi?.nama,
-    kota: kota?.nama,
-    kecamatan: kecamatan?.nama,
-    kelurahan: kelurahan?.nama,
+    provinsi: chooseProvinsi?.nama,
+    kota: chooseKota?.nama,
+    kecamatan: chooseKecamatan?.nama,
+    kelurahan: chooseKelurahan?.nama,
   };
-  console.log(provinsi);
+  console.log('object', chooseProvinsi);
+  console.log('object', data);
   const nextPage = () => {
     if (
       isEmpty(data.firstName) ||
@@ -57,7 +93,6 @@ const Wizard1 = ({navigation}) => {
       navigation.navigate('Wizard2', {data: data});
     }
   };
-
   return (
     <SafeAreaView
       style={{
@@ -97,46 +132,52 @@ const Wizard1 = ({navigation}) => {
             onChangeText={setBiodata}
             textAlignVertical="top"
           />
-          <DropdownItem
+          <DropdownSearch
+            dataRegion={dataProvinsi}
+            // searchData={setSearchRegion}
+            chooseRegion={setChooseProvinsi}
             label="Provinsi"
             type="Provinsi"
             placeholder="Pilih Provinsi"
             open={open}
-            items={itemProvinsi}
             setOpen={setOpen}
-            value={provinsi?.nama}
-            setValue={setProvinsi}
+            value={chooseProvinsi?.nama}
           />
-          <DropdownItem
+          <DropdownSearch
+            dataRegion={dataKota}
+            // searchData={setSearchRegion}
+            chooseRegion={setChooseKota}
             label="Kota"
             type="Kota"
             placeholder="Pilih Kota"
             open={open}
-            items={itemProvinsi}
             setOpen={setOpen}
-            value={kota?.nama}
-            setValue={setKota}
+            value={chooseKota?.nama}
           />
-          <DropdownItem
+          <DropdownSearch
+            dataRegion={dataKecamatan}
+            // searchData={setSearchRegion}
+            chooseRegion={setChooseKecamatan}
             label="Kecamatan"
             type="Kecamatan"
             placeholder="Pilih Kecamatan"
             open={open}
-            items={itemProvinsi}
             setOpen={setOpen}
-            value={kecamatan?.nama}
-            setValue={setKecamatan}
+            value={chooseKecamatan?.nama}
           />
-          <DropdownItem
+
+          <DropdownSearch
+            dataRegion={dataKelurahan}
+            // searchData={setSearchRegion}
+            chooseRegion={setChooseKelurahan}
             label="Kelurahan"
             type="Kelurahan"
             placeholder="Pilih Kelurahan"
             open={open}
-            items={itemProvinsi}
             setOpen={setOpen}
-            value={kelurahan?.nama}
-            setValue={setKelurahan}
+            value={chooseKelurahan?.nama}
           />
+
           <Gap height={20} />
           <Button onPress={nextPage} text="Selanjutnya" />
         </View>

@@ -1,11 +1,10 @@
-import {isEmpty, isError} from 'lodash';
 import React, {useRef, useState} from 'react';
 import {
   Dimensions,
   Image,
+  Modal,
   StyleSheet,
   Text,
-  Modal,
   TouchableOpacity,
   View,
 } from 'react-native';

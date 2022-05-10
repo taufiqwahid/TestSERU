@@ -1,11 +1,12 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {LogBox, StyleSheet} from 'react-native';
 import FlashMessage from 'react-native-flash-message';
-import {FlatList} from 'react-native-gesture-handler';
 import Router from './src/router';
 
 const App = () => {
+  LogBox.ignoreAllLogs();
+
   return (
     <NavigationContainer>
       <Router />

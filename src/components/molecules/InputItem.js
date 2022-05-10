@@ -1,10 +1,9 @@
 import React from 'react';
-import {StyleSheet, Text, View, TextInput} from 'react-native';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
 import {Colors} from '../../utils/colors';
 import {Texts} from '../../utils/texts';
 
 const InputItem = props => {
-  console.log(props.onChangeText);
   return (
     <View style={{marginBottom: 20}}>
       <Text style={{...Texts.regular1, marginBottom: 10}}>{props.label}</Text>
