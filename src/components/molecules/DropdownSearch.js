@@ -72,6 +72,7 @@ const DropdownSearch = props => {
               <TextInput
                 style={styles.textinput}
                 maxLength={40}
+                placeholderTextColor={Colors.grey}
                 placeholder="Cari nama wilayah . . ."
                 onChangeText={props.searchData}
                 // value={props.value}
