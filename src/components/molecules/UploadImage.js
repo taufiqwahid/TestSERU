@@ -45,7 +45,7 @@ const UploadImage = ({type, setPhoto, source, label}) => {
 
   return (
     <View style={{marginVertical: 20}}>
-      <Text style={{...Texts.regular1, marginBottom: 10}}>Upload Image</Text>
+      <Text style={{...Texts.regular1, marginBottom: 10}}>{label}</Text>
       <View style={{flexDirection: 'row', justifyContent: 'center'}}>
         <TouchableOpacity
           onPress={checkType}
