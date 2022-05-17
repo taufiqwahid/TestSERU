@@ -2,12 +2,13 @@ import axios from 'axios';
 import {filter, isEmpty} from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, ScrollView, View} from 'react-native';
+import {useDispatch} from 'react-redux';
 import Button from '../components/atoms/Button';
 import Gap from '../components/atoms/Gap';
 import DropdownSearch from '../components/molecules/DropdownSearch';
-import Header from '../components/molecules/Header';
 import InputItem from '../components/molecules/InputItem';
 import {com} from '../config/API';
+import {getData, mergeData, storeData} from '../utils/asyncStorage';
 import {Colors} from '../utils/colors';
 import toastMessage from '../utils/toastMessage';
 
@@ -30,6 +31,9 @@ const Wizard1 = ({navigation}) => {
   const [chooseKota, setChooseKota] = useState();
   const [chooseKecamatan, setChooseKecamatan] = useState();
   const [chooseKelurahan, setChooseKelurahan] = useState();
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
     getProvinsi();
   }, []);
@@ -89,8 +93,15 @@ const Wizard1 = ({navigation}) => {
       isEmpty(data.kelurahan)
     ) {
       toastMessage('Pastikan data tidak ada yang kosong !', 'info');
+      storeData('@statusFirstStep', false);
+      dispatch({type: 'SET_LOADING', value: false});
     } else {
-      navigation.navigate('Wizard2', {data: data});
+      // navigation.navigate('Wizard2', {data: data});
+      storeData('@statusFirstStep', true);
+      // storeData('@activeStep', 1);
+      storeData('@dataWizard1', data);
+      dispatch({type: 'SET_LOADING', value: true});
+      dispatch({type: 'SET_STEPACTIVE', value: 1});
     }
   };
 
@@ -141,7 +152,36 @@ const Wizard1 = ({navigation}) => {
       : setDataSearchKelurahan([]);
   };
 
-  console.log('asdasdasd', dataSearchProvinsi);
+  const getDataLocal = () => {
+    getData('firstName').then(item => {
+      setFirstName(item);
+    });
+    getData('lastName').then(item => {
+      setLastName(item);
+    });
+    getData('biodata').then(item => {
+      setBiodata(item);
+    });
+    getData('chooseProvinsi').then(item => {
+      setChooseProvinsi(item);
+    });
+    getData('chooseKota').then(item => {
+      setChooseKota(item);
+    });
+    getData('chooseKecamatan').then(item => {
+      setChooseKecamatan(item);
+    });
+    getData('chooseKelurahan').then(item => {
+      setChooseKelurahan(item);
+    });
+  };
+
+  useEffect(() => {
+    // storeData('@activeStep', 0);
+    storeData('@firstPage', false);
+    dispatch({type: 'SET_LOADING', value: false});
+    getDataLocal();
+  }, []);
 
   return (
     <SafeAreaView
@@ -149,12 +189,12 @@ const Wizard1 = ({navigation}) => {
         flex: 1,
         backgroundColor: Colors.default,
       }}>
-      <Header
+      {/* <Header
         title="Registration Form"
         subtitle="Enter Bio and Region"
         onPress={() => alert('asdasdas')}
         firstPage
-      />
+      /> */}
       <ScrollView
         style={{
           backgroundColor: 'white',
@@ -167,19 +207,28 @@ const Wizard1 = ({navigation}) => {
           <InputItem
             label="First Name"
             value={firstName}
-            onChangeText={setFirstName}
+            onChangeText={text => {
+              setFirstName(text);
+              mergeData('firstName', text);
+            }}
           />
           <InputItem
             label="Last Name"
             value={lastName}
-            onChangeText={setLastName}
+            onChangeText={text => {
+              setLastName(text);
+              mergeData('lastName', text);
+            }}
           />
           <InputItem
             label="Biodata"
             multiline
             numberOfLines={4}
             value={biodata}
-            onChangeText={setBiodata}
+            onChangeText={text => {
+              setBiodata(text);
+              mergeData('biodata', text);
+            }}
             textAlignVertical="top"
           />
           <DropdownSearch
@@ -187,7 +236,10 @@ const Wizard1 = ({navigation}) => {
               dataSearchProvinsi.length ? dataSearchProvinsi : dataProvinsi
             }
             searchData={searchProvinsi}
-            chooseRegion={setChooseProvinsi}
+            chooseRegion={item => {
+              setChooseProvinsi(item);
+              mergeData('chooseProvinsi', item);
+            }}
             label="Provinsi"
             type="Provinsi"
             placeholder="Pilih Provinsi"
@@ -197,7 +249,10 @@ const Wizard1 = ({navigation}) => {
           <DropdownSearch
             dataRegion={dataSearchKota.length ? dataSearchKota : dataKota}
             searchData={searchKota}
-            chooseRegion={setChooseKota}
+            chooseRegion={item => {
+              setChooseKota(item);
+              mergeData('chooseKota', item);
+            }}
             label="Kota"
             type="Kota"
             placeholder="Pilih Kota"
@@ -209,7 +264,10 @@ const Wizard1 = ({navigation}) => {
               dataSearchKecamatan.length ? dataSearchKecamatan : dataKecamatan
             }
             searchData={searchKecamatan}
-            chooseRegion={setChooseKecamatan}
+            chooseRegion={item => {
+              setChooseKecamatan(item);
+              mergeData('chooseKecamatan', item);
+            }}
             label="Kecamatan"
             type="Kecamatan"
             placeholder="Pilih Kecamatan"
@@ -221,7 +279,10 @@ const Wizard1 = ({navigation}) => {
               dataSearchKelurahan.length ? dataSearchKelurahan : dataKelurahan
             }
             searchData={searchKelurahan}
-            chooseRegion={setChooseKelurahan}
+            chooseRegion={item => {
+              setChooseKelurahan(item);
+              mergeData('chooseKelurahan', item);
+            }}
             label="Kelurahan"
             type="Kelurahan"
             placeholder="Pilih Kelurahan"

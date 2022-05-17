@@ -1,5 +1,5 @@
 import {isEmpty} from 'lodash';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -8,10 +8,11 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import {useDispatch} from 'react-redux';
 import Button from '../components/atoms/Button';
 import Gap from '../components/atoms/Gap';
-import Header from '../components/molecules/Header';
 import UploadImage from '../components/molecules/UploadImage';
+import {getData, mergeData, storeData} from '../utils/asyncStorage';
 import {Colors} from '../utils/colors';
 import {Texts} from '../utils/texts';
 import toastMessage from '../utils/toastMessage';
@@ -22,12 +23,34 @@ const Wizard2 = ({navigation, route}) => {
   const [noKtp, setNoKtp] = useState();
   const [photoBebas, setPhotoBebas] = useState();
   const dataRoute = route?.params?.data;
+  const dispatch = useDispatch();
+
   const data = {
-    ...dataRoute,
     photoSelfie,
     photoKTP,
     noKtp,
     photoBebas,
+  };
+
+  useEffect(() => {
+    // storeData('@activeStep', 1);
+    dispatch({type: 'SET_LOADING', value: false});
+    getDataLocal();
+  }, []);
+
+  const getDataLocal = () => {
+    getData('photoSelfie').then(item => {
+      setPhotoSelfie(item);
+    });
+    getData('photoKTP').then(item => {
+      setPhotoKTP(item);
+    });
+    getData('photoBebas').then(item => {
+      setPhotoBebas(item);
+    });
+    getData('noKtp').then(item => {
+      setNoKtp(item);
+    });
   };
 
   const nextPage = () => {
@@ -38,21 +61,31 @@ const Wizard2 = ({navigation, route}) => {
       isEmpty(photoBebas)
     ) {
       toastMessage('Pastikan data tidak ada yang kosong !', 'info');
+      storeData('@statusFirstStep', false);
+      dispatch({type: 'SET_LOADING', value: false});
     } else {
-      navigation.navigate('Wizard3', {data: data});
+      // navigation.navigate('Wizard3', {data: data});
+
+      storeData('@statusFirstStep', true);
+      // storeData('@activeStep', 2);
+      storeData('@dataWizard2', data);
+      storeData('@title', 'Upload Image');
+      dispatch({type: 'SET_LOADING', value: true});
+      dispatch({type: 'SET_STEPACTIVE', value: 2});
     }
   };
+
   return (
     <SafeAreaView
       style={{
         flex: 1,
         backgroundColor: Colors.default,
       }}>
-      <Header
+      {/* <Header
         title="Registration Form"
         subtitle="Upload Image"
         onPress={() => navigation.goBack()}
-      />
+      /> */}
       <ScrollView
         style={{
           backgroundColor: 'white',
@@ -63,14 +96,22 @@ const Wizard2 = ({navigation, route}) => {
         <View style={{paddingHorizontal: 20}}>
           <Gap height={20} />
           <UploadImage
+            label="Foto Selfie"
             value={photoSelfie}
-            setPhoto={setPhotoSelfie}
+            setPhoto={item => {
+              setPhotoSelfie(item);
+              mergeData('photoSelfie', item);
+            }}
             source={photoSelfie}
             type="selfie"
           />
           <UploadImage
+            label="Foto KTP"
             value={photoKTP}
-            setPhoto={setPhotoKTP}
+            setPhoto={item => {
+              setPhotoKTP(item);
+              mergeData('photoKTP', item);
+            }}
             source={photoKTP}
             type="ktp"
           />
@@ -80,7 +121,10 @@ const Wizard2 = ({navigation, route}) => {
             <TextInput
               value={noKtp}
               placeholder="Masukkan No KTP"
-              onChangeText={t => setNoKtp(t)}
+              onChangeText={item => {
+                setNoKtp(item);
+                mergeData('noKtp', item);
+              }}
               style={styles.textinput}
               maxLength={120}
               keyboardType="number-pad"
@@ -88,8 +132,12 @@ const Wizard2 = ({navigation, route}) => {
           </View>
 
           <UploadImage
+            label="Foto Bebas"
             value={photoBebas}
-            setPhoto={setPhotoBebas}
+            setPhoto={item => {
+              setPhotoBebas(item);
+              mergeData('photoBebas', item);
+            }}
             source={photoBebas}
             type="bebas"
           />
